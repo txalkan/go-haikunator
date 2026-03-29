@@ -1,0 +1,24 @@
+[tools]
+go = "1.26"
+golangci-lint = "2.11.4"
+gofumpt = "0.7.0"
+
+[tasks.test]
+description = "Run Go tests"
+run = [
+  "mkdir -p .cache/go-build .cache/go-mod",
+  "GOCACHE=$PWD/.cache/go-build GOMODCACHE=$PWD/.cache/go-mod go test -v -coverprofile=coverage.out ./...",
+  "go tool cover -func=coverage.out",
+]
+
+[tasks.lint]
+description = "Run golangci-lint with project config"
+run = [
+  "mkdir -p .cache/go-build .cache/go-mod",
+  "GOCACHE=$PWD/.cache/go-build GOMODCACHE=$PWD/.cache/go-mod golangci-lint run --config .golangci.yml ./...",
+]
+
+[tasks.format]
+description = "Format Go code"
+alias = "fmt"
+run = ["find . -name '*.go' -not -path './.cache/*' | xargs gofumpt -w"]
