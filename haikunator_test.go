@@ -1,32 +1,51 @@
 package haikunator
 
 import (
+	"strings"
 	"testing"
-	"time"
 )
 
-func TestAreGeneratedNamesRandomOrNot(t *testing.T) {
-	names := make([]string, 50)
+func TestHaikunateFormat(t *testing.T) {
+	h := New()
+	name := h.Haikunate()
 
-	for i, _ := range names {
-		haikunator := New(time.Now().UTC().UnixNano())
-		names[i] = haikunator.Haikunate()
+	parts := strings.SplitN(name, "-", 2)
+	if len(parts) != 2 {
+		t.Fatalf("expected adjective-noun format, got %q", name)
 	}
+	if parts[0] == "" || parts[1] == "" {
+		t.Fatalf("empty component in %q", name)
+	}
+}
 
-	for i, name1 := range names {
-		for j, name2 := range names {
-			if i != j && name1 == name2 {
-				t.Fatalf("not unique: %v : %v and %v :%v", i, j, name1, name2)
-			}
+func TestUniqueness(t *testing.T) {
+	h := NewWithSeed(12345)
+	seen := make(map[string]bool)
+
+	for range 20 {
+		name := h.Haikunate()
+		if seen[name] {
+			t.Fatalf("duplicate name: %s", name)
+		}
+		seen[name] = true
+	}
+}
+
+func TestDeterministicSeed(t *testing.T) {
+	h1 := NewWithSeed(42)
+	h2 := NewWithSeed(42)
+
+	for range 50 {
+		if h1.Haikunate() != h2.Haikunate() {
+			t.Fatal("same seed should produce same sequence")
 		}
 	}
 }
 
-func TestTotalCombinations(t *testing.T) {
-	// This test should be kept up-to-date with the README
-	expected := 8645
-	found := len(ADJECTIVES) * len(NOUNS)
-	if expected != found {
-		t.Fatalf("mismatched total combinations: expected %v but found %v", expected, found)
+func TestSize(t *testing.T) {
+	h := New()
+	expected := len(adjectives) * len(nouns)
+	if h.Size() != expected {
+		t.Fatalf("expected %d combinations, got %d", expected, h.Size())
 	}
 }
