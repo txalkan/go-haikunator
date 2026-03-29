@@ -1,8 +1,9 @@
 package haikunator
 
 import (
+	"crypto/rand"
 	"fmt"
-	"math/rand/v2"
+	"math/big"
 )
 
 var (
@@ -37,24 +38,16 @@ var (
 )
 
 // Haikunator generates Heroku-like memorable random names.
-type Haikunator struct {
-	r *rand.Rand
-}
+type Haikunator struct{}
 
-// New creates a Haikunator that uses the global random source (auto-seeded).
+// New creates a Haikunator.
 func New() *Haikunator {
 	return &Haikunator{}
 }
 
-// NewWithSeed creates a Haikunator with a deterministic seed for reproducible output.
-func NewWithSeed(seed uint64) *Haikunator {
-	return &Haikunator{r: rand.New(rand.NewPCG(seed, seed))} //nolint:gosec // crypto rand unnecessary for name generation
-}
-
 // Haikunate returns a random name in the form "adjective-noun".
 func (h *Haikunator) Haikunate() string {
-	adj, noun := h.pick()
-	return fmt.Sprintf("%s-%s", adj, noun)
+	return fmt.Sprintf("%s-%s", adjectives[randIntn(len(adjectives))], nouns[randIntn(len(nouns))])
 }
 
 // Size returns the total number of unique name combinations.
@@ -62,9 +55,10 @@ func (h *Haikunator) Size() int {
 	return len(adjectives) * len(nouns)
 }
 
-func (h *Haikunator) pick() (string, string) {
-	if h.r != nil {
-		return adjectives[h.r.IntN(len(adjectives))], nouns[h.r.IntN(len(nouns))]
+func randIntn(n int) int {
+	v, err := rand.Int(rand.Reader, big.NewInt(int64(n)))
+	if err != nil {
+		panic(fmt.Sprintf("crypto/rand failed: %v", err))
 	}
-	return adjectives[rand.IntN(len(adjectives))], nouns[rand.IntN(len(nouns))] //nolint:gosec // crypto rand unnecessary for name generation
+	return int(v.Int64())
 }
