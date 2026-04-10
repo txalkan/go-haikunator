@@ -22,6 +22,15 @@ func TestHaikunateFormat(t *testing.T) {
 	}
 }
 
+func TestHaikunateSeededDeterministic(t *testing.T) {
+	h1 := NewWithSeed(42)
+	h2 := NewWithSeed(42)
+
+	if got1, got2 := h1.Haikunate(), h2.Haikunate(); got1 != got2 {
+		t.Fatalf("expected seeded names to match, got %q and %q", got1, got2)
+	}
+}
+
 func TestUniqueness(t *testing.T) {
 	h := New()
 	seen := make(map[string]bool)
