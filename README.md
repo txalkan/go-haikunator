@@ -1,6 +1,6 @@
 # go-haikunator
 
-[![CI](https://github.com/yelinaung/go-haikunator/actions/workflows/ci.yml/badge.svg)](https://github.com/yelinaung/go-haikunator/actions/workflows/ci.yml)
+[![CI](https://github.com/txalkan/go-haikunator/actions/workflows/ci.yml/badge.svg)](https://github.com/txalkan/go-haikunator/actions/workflows/ci.yml)
 
 Heroku-like memorable random name generator. Golang port of [haikunator](https://github.com/usmanbashir/haikunator).
 
@@ -12,7 +12,7 @@ snowy-brook
 bitter-darkness
 ```
 
-View the [docs](https://pkg.go.dev/github.com/yelinaung/go-haikunator).
+View the [docs](https://pkg.go.dev/github.com/txalkan/go-haikunator).
 
 ## Example
 
@@ -22,7 +22,7 @@ package main
 import (
 	"fmt"
 
-	haikunator "github.com/yelinaung/go-haikunator"
+	haikunator "github.com/txalkan/go-haikunator"
 )
 
 func main() {
